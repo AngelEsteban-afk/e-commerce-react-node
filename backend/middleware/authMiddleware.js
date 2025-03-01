@@ -13,3 +13,5 @@ export const authMiddleware = (req, res, next) => {
     res.status(400).json({ message: "Token inválido" });
   }
 };
+
+router.get("/orders", authMiddleware, getOrdersByUser);

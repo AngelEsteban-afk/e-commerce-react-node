@@ -1,29 +1,92 @@
-import User from "../models/User.js";
+import { validationResult } from "express-validator"; // Para manejar errores de validación
+import User from "../models/User.js"; // Importa el modelo de usuario
+import bcrypt from "bcryptjs"; // Para hashear la contraseña
+import jwt from "jsonwebtoken"; // Para generar tokens JWT
 
-// Registro de usuario
+// Controlador para registrar un nuevo usuario
 export const register = async (req, res) => {
+  // Verificar si hay errores de validación
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { name, email, password } = req.body;
+
   try {
-    const user = new User({ name, email, password });
+    // Verificar si el usuario ya existe
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: "El usuario ya existe" });
+    }
+
+    // Crear un nuevo usuario
+    user = new User({ name, email, password });
+
+    // Hashear la contraseña
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+
+    // Guardar el usuario en la base de datos
     await user.save();
-    const token = user.generateAuthToken();
-    res.status(201).json({ token });
+
+    // Generar un token JWT
+    const payload = {
+      user: {
+        id: user.id,
+      },
+    };
+
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }, // El token expira en 1 hora
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token });
+      }
+    );
   } catch (error) {
-    res.status(400).json({ message: "Error al registrar el usuario" });
+    console.error(error.message);
+    res.status(500).json({ message: "Error en el servidor" });
   }
 };
 
-// Inicio de sesión
+// Controlador para iniciar sesión
 export const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
-    const user = await User.findOne({ email });
-    if (!user || !(await user.comparePassword(password))) {
-      return res.status(400).json({ message: "Credenciales incorrectas" });
+    // Verificar si el usuario existe
+    let user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Credenciales inválidas" });
     }
-    const token = user.generateAuthToken();
-    res.json({ token });
+
+    // Verificar la contraseña
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Credenciales inválidas" });
+    }
+
+    // Generar un token JWT
+    const payload = {
+      user: {
+        id: user.id,
+      },
+    };
+
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }, // El token expira en 1 hora
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token });
+      }
+    );
   } catch (error) {
-    res.status(500).json({ message: "Error al iniciar sesión" });
+    console.error(error.message);
+    res.status(500).json({ message: "Error en el servidor" });
   }
 };
