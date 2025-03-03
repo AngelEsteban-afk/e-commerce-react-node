@@ -111,8 +111,7 @@ button:focus-visible {
   }
 }
 
-@tailwind base;
-@tailwind components;
+@import "tailwindcss/preflight";
 @tailwind utilities;
 
 .dark {

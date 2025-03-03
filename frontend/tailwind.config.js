@@ -1,5 +1,11 @@
-export const content = ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"];
-export const theme = {
-  extend: {},
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}", // Asegúrate de incluir todos los archivos relevantes
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
 };
-export const plugins = [];
