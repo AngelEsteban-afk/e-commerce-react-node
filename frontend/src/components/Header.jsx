@@ -1,12 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Importa Link para la navegación
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
     <header className="bg-gray-800 text-white p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         {/* Título o logo */}
-        <h1 className="text-2xl font-bold">Mi E-commerce</h1>
+        <h1 className="text-2xl font-bold">E-commerce</h1>
 
         {/* Botones de navegación */}
         <nav className="space-x-4 flex items-center">

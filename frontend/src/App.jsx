@@ -10,6 +10,7 @@ import IniciarSesion from "./pages/Login";
 import Registrarse from "./pages/Register";
 import Orders from "./pages/Orders";
 import Productos from "./pages/Productos";
+import AddProductForm from "./components/AddProductForm";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/registrarse" element={<Registrarse />} />
           <Route path="/iniciar-sesion" element={<IniciarSesion />} />{" "}
+          <Route path="/add-product" element={<AddProductForm />} />
           {/* Nueva ruta */}
         </Routes>
       </div>
