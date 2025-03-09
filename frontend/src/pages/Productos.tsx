@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
 
 const ProductsPage = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<
+    { id: number; [key: string]: any }[]
+  >([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     axios
